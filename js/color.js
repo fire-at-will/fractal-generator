@@ -1,74 +1,38 @@
 var colors;
-var numberOfColors;
-function getPixelColor(n){
+
+function getPixelColor(result){
+
+	var n = result[0];
+
 	// Map to RGB
 	if(Math.floor(n) == maxIterations){
 		return [0, 0, 0];
 	}
 
 	switch(palatteMode){
-		case "Blue":
+		case 'Blue':
 			color = mapIterationToColorBlue(n);
 			break;
-		case "Red":
+		case 'Red':
 			color = mapIterationToColorRed(n);
 			break;
-		case "Green":
+		case 'Green':
 			color = mapIterationToColorGreen(n);
 			break;
-		case "Purple":
+		case 'Purple':
 			color = mapIterationToColorPurple(n);
 			break;
-	}
-
-	switch(postEffect){
-		case "squared":
-			color[0] = color[0] * color[0] % 256;
-			color[1] = color[1] * color[1] % 256;
-			break;
-		case "sin":
-			color[0] = Math.sin(color[0]);
-			color[1] = Math.sin(color[1]);
-			color[2] = Math.sin(color[2]);
-			break;
-		case "tan":
-			color[0] = Math.tan(color[0]);
-			color[1] = Math.tan(color[1]);
-			color[2] = Math.tan(color[2]);
-			break;
-		default:
+		case 'smooth':
+			color = getSmoothColor(n, result[1], result[2]);
 			break;
 	}
 
 	return color;
 }
 
-function getColor(mu){
-	// var color1 = Math.floor(mu);
-	// var second = mu - color1;
-	// var inverse = 1 - second;
+function getSmoothColor(n, Tr, Ti){
 
-	// color1 = color1 % numberOfColors;
-	// var color2 = (color1 + 1) % numberOfColors;
-
-	// if(isNaN(color1)){
-	// 	//console.log("saved the day");
-	// 	color1 = 3;
-	// }
-	// if(isNaN(color2)){
-	// 	//console.log("saved the day again");
-	// 	color2 = 3;
-	// }
-
-	// //console.log("Color 1 " + color1);
-
-	// //console.log(mu + " " + color1)
-
-	// var r = (colors[color1][0]) * inverse; //+ (colors[color2][0] * second);
-	// var g = colors[color1][1] * inverse + colors[color2][1] * second;
-	// var b = colors[color1][2] * inverse + colors[color2][2] * second;
-
-	// return colors[color1];
+	var mu = getSmoothedN(n, Tr, Ti);
 
 	if(isNaN(mu)){
 		mu = 3;
@@ -78,93 +42,191 @@ function getColor(mu){
     if (colorIndex >= 768) colorIndex = 0;
     if (colorIndex < 0) colorIndex = 0;
 
-    // console.log("Returning " + colorIndex + ": " + colors[colorIndex]);
     return colors[colorIndex];
 }
 
-function generateColors(numberOfColors){
-	// numberOfColors = numberOfColors;
+function generateSmoothColorPalatte(palatteMode){
 	colors = [];
 
-	// Blue
-	for(var i = 0; i < 768; i++){
-		var r = 0;
-		var g = 0;
-		var b = 0;
-		if(i >= 512){
-			r = i - 512;
-			g = 255 - r;
-		} else if(i >= 256){
-			g = i - 256;
-			b = 255 - g;
-		} else {
-			b = i;
-		}
+	switch(palatteMode){
+		case 'Smooth Blue':
+			// Blue
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = i - 512;
+					g = 255 - r;
+				} else if(i >= 256){
+					g = i - 256;
+					b = 255 - g;
+				} else {
+					b = i;
+				}
 
-		colors[i] = [r, g, b];
-	}
-	// Red
-	// for(var i = 0; i < 768; i++){
-	// 	var r = 0;
-	// 	var g = 0;
-	// 	var b = 0;
-	// 	if(i >= 512){
-	// 		g = i - 512;
-	// 		r = 255 - g;
-	// 	} else if(i >= 256){
-	// 		b = i - 256;
-	// 		g = 255 - b;
-	// 	} else {
-	// 		r = i;
-	// 	}
+				colors[i] = [r, g, b];
+			}
+			break;
 
-	// 	colors[i] = [r, g, b];
-	// }
+		case 'Smooth Red':
+			//Red
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					g = i - 512;
+					r = 255 - g;
+				} else if(i >= 256){
+					b = i - 256;
+					g = 255 - b;
+				} else {
+					r = i;
+				}
 
-	// B&W
-	// 	for(var i = 0; i < 768; i++){
-	// 	var r = 0;
-	// 	var g = 0;
-	// 	var b = 0;
-	// 	if(i >= 512){
-	// 		r = i % 768;
-	// 		g = i % 768;
-	// 		b = i % 768;
-	// 	} else if(i >= 256){
-	// 		r = i % 768;
-	// 		g = i % 768;
-	// 		b = i % 768;
-	// 	} else {
-	// 		r = parseInt(i / 768);
-	// 		g = parseInt(i / 768);
-	// 		b = parseInt(i / 768);
-	// 	}
+				colors[i] = [r, g, b];
+			}
+			break;
 
-	// 	colors[i] = [r, g, b];
-	// }
+		case 'White on Black':
+			// B&W
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = i % 768;
+					g = i % 768;
+					b = i % 768;
+				} else if(i >= 256){
+					r = i % 768;
+					g = i % 768;
+					b = i % 768;
+				} else {
+					r = parseInt(i / 768);
+					g = parseInt(i / 768);
+					b = parseInt(i / 768);
+				}
 
-	// Grayscale
-	// for(var i = 0; i < 768; i++){
-	// 	var r = 0;
-	// 	var g = 0;
-	// 	var b = 0;
-	// 	if(i >= 512){
-	// 		r = i % 768;
-	// 		g = i % 768;
-	// 		b = i % 768;
-	// 	} else if(i >= 256){
-	// 		r = i % 768;
-	// 		g = i % 768;
-	// 		b = i % 768;
-	// 	} else {
-	// 		r = i % 768;
-	// 		g = i % 768;
-	// 		b = i % 768;
-	// 	}
+				colors[i] = [r, g, b];
+			}
+			break;
+		case 'White on Sky Blue':
+			// B&W
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = i % 768;
+					g = i % 768;
+					b = i % 768;
+				} else if(i >= 256){
+					r = i % 768;
+					g = i % 768;
+					b = i % 768;
+				} else {
+					r = parseInt(i / 768);
+					g = parseInt(256 - i);
+					b = parseInt(256 - i);
+				}
 
-	// 	colors[i] = [r, g, b];
-	// }
-	
+				colors[i] = [r, g, b];
+			}
+			break;
+		case 'Smooth Grayscale':
+			// Grayscale
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = i - (i / 2)
+					g = i - (i / 2)
+					b = i - (i / 2)
+				} else if(i >= 256){
+					r = i - (i / 2)
+					g = i - (i / 2)
+					b = i - (i / 2)
+				} else {
+					r = i - (i / 2)
+					g = i - (i / 2)
+					b = i - (i / 2)
+				}
+
+				colors[i] = [r, g, b];
+			}
+			break;
+		case 'Bob Marley':
+			// Bob Marley
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = (i * i) % 768;
+					g = (i * i * i) % 768;
+					b = i % 768;
+				} else if(i >= 256){
+					r = (i * i) % 768;
+					g = (i * i * i) % 768;
+					b = i % 768;
+				} else {
+					r = (i * i * i) % 768;
+					g = (i * i) % 768;
+					b = i % 768;
+				}
+
+				colors[i] = [r, g, b];
+			}
+			break;
+		case 'Red on Black':
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = 255;
+					g = 34 + (i % 40);
+					b = 12 + (i % 20);
+				} else if(i >= 256){
+					r = 255;
+					g = 34 + (i % 20);
+					b = 0 + (i % 40);
+				} else {
+					r = parseInt(i / 768);
+					g = parseInt(i / 768);
+					b = parseInt(i / 768);
+				}
+
+				colors[i] = [r, g, b];
+			}
+			break;
+		case 'Experimental':
+			// Bob Marley
+			for(var i = 0; i < 768; i++){
+				var r = 0;
+				var g = 0;
+				var b = 0;
+				if(i >= 512){
+					r = (i * i * i) % 768;
+					g = 256 - i;
+					b = i % 768;
+				} else if(i >= 256){
+					r = (i * i) % 768;
+					g = (i * i * i) % 768;
+					b = i % 768;
+				} else {
+					r = posCos(i);
+					g = (i * i) % 768;
+					b = (i * i * posCos(i)) % 768;
+				}
+
+				colors[i] = [r, g, b];
+			}
+			break;
+	}	
 }
 
 
@@ -206,9 +268,19 @@ function mapIterationToColorGreen(iteration){
 }
 
 function getSmoothedN(n, Tr, Ti){
-	let logBase = 1.0 / Math.log(2.0);
-	let logHalfBase = Math.log(0.5)*logBase;
+	var logBase = 1.0 / Math.log(2.0);
+	var logHalfBase = Math.log(0.5)*logBase;
 	return 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
+}
+
+function isColorModeSmooth(colorMode){
+	if(smoothColors.indexOf(colorMode) <= -1){
+		console.log('Color mode ' + colorMode + ' is not smooth.');
+		return false;
+	} else {
+		console.log('Color mode ' + colorMode + ' is smooth.');
+		return true;
+	}
 }
 
 function performAntialiasing(pixels, width, height){

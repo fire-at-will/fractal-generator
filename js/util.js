@@ -10,8 +10,13 @@ function redraw(){
 
 function onMouseDown(e){
 	// Get mouse coordinates
-	let mouseX = parseInt(e.clientX - offsetX);
-	let mouseY = parseInt(e.clientY - offsetY);
+	var mouseX = parseInt(e.clientX - offsetX);
+	var mouseY = parseInt(e.clientY - offsetY);
+
+	if(autoIncrementIterations){
+		maxIterations += 25;
+		$('#iteration-input').val(maxIterations);
+	}
 
 	/*
 	* We're dealing with two coordinate planes here: 
@@ -25,16 +30,16 @@ function onMouseDown(e){
 
 	// Calculate new center of the view (in logical coordinate plane)
 	// based on where the user clicks.
-	let centerX = mapScreenPixelsToCoordinatePlane(mouseX, width, minR, maxR);
-	let centerY = mapScreenPixelsToCoordinatePlane(mouseY, height, minI, maxI);
+	var centerX = mapScreenPixelsToCoordinatePlane(mouseX, width, minR, maxR);
+	var centerY = mapScreenPixelsToCoordinatePlane(mouseY, height, minI, maxI);
 
 	if(e.shiftKey){
 		// Zoom out
 		// Zoom out on the point while maintaining aspect ratio
-		let rRange = maxR - minR;
-		let iRange = maxI - minI;
+		var rRange = maxR - minR;
+		var iRange = maxI - minI;
 
-		let zoom = 1 + zoomRate;
+		var zoom = 1 + zoomRate;
 
 		minR = centerX - ((rRange / 2) * zoom);
 		maxR = centerX + ((rRange / 2) * zoom);
@@ -44,10 +49,10 @@ function onMouseDown(e){
 	} else {
 		// Zoom in
 		// Zoom in on the point while maintaining aspect ratio
-		let rRange = maxR - minR;
-		let iRange = maxI - minI;
+		var rRange = maxR - minR;
+		var iRange = maxI - minI;
 
-		let zoom = 1 - zoomRate;
+		var zoom = 1 - zoomRate;
 
 		minR = centerX - ((rRange / 2) * zoom);
 		maxR = centerX + ((rRange / 2) * zoom);
@@ -65,6 +70,7 @@ function onMouseDown(e){
 // -------------------------------- Fullscreen Stuff --------------------------------
 
 function toggleFullscreen(){
+	onLoad();
 	if(!fullscreen){
 		enterFullscreen();
 	} else {
@@ -72,47 +78,54 @@ function toggleFullscreen(){
 	}
 }
 
-function enterFullscreen(){
-	if (
-		document.fullscreenEnabled || 
-		document.webkitFullscreenEnabled || 
-		document.mozFullScreenEnabled ||
-		document.msFullscreenEnabled
-	) {
-		let screen = document.getElementById("screen")
-		if (screen.requestFullscreen) {
-			screen.requestFullscreen();
-			fullscreen = true;
-		} else if (screen.webkitRequestFullscreen) {
-			screen.webkitRequestFullscreen();
-			fullscreen = true;
-		} else if (screen.mozRequestFullScreen) {
-			screen.mozRequestFullScreen();
-			fullscreen = true;
-		} else if (screen.msRequestFullscreen) {
-			screen.msRequestFullscreen();
-			fullscreen = true;
-		}
-		onLoad()
-	} else {
-		alert("Cannot do full screen");
-	}
+/*****************************************************************************************************
+* This website was initially developed in a viewport of size 1280x667 pixels. It was found 
+* that the values:
+*	minI: -1.5
+*	maxI: 1.5
+*
+*	minR: -2.8
+*	maxR: 2
+*
+*	rCenter = -0.4
+*	iCenter = 0
+*
+* gave us a good looking fractal. However, aspect ratios aren't always constant, so we need to 
+* adjust our values to maintain a good aspect ratio to render the fractal in.
+*
+* To get the distance between minI and maxI, divide height by 266.6 repeating.
+* To get the distance between minR and maxR, divide width  by 225.6 repeating.
+*
+* These values were determined through the ratios:
+*	1280: 4.8  (Height)
+*	677 : 2.8  (Width)
+*
+* To find the min/max values of i/r, we divide height and width by their constants to get the distances.
+* We then divide the distances by 2 and add/subtract them from their center value to get the min/max
+* values.
+* 
+*****************************************************************************************************/
+function adjustToScreenAspectRatio(){
+
+	var iDistance = height / 483.5814286;
+	var rDistance = width / 533.33333;
+
+	minI = -iDistance;
+	maxI = iDistance;
+	minR = -0.4 - rDistance;
+	maxR = -0.4 + rDistance;
 }
 
-function exitFullscreen(){
-	if (document.exitFullscreen) {
-		document.exitFullscreen();
-		fullscreen = false;
-	} else if (document.webkitExitFullscreen) {
-		document.webkitExitFullscreen();
-		fullscreen = false;
-	} else if (document.mozCancelFullScreen) {
-		document.mozCancelFullScreen();
-		fullscreen = false;
-	} else if (document.msExitFullscreen) {
-		document.msExitFullscreen();
-		fullscreen = false;
-	}
+// Absolute value
+function abs(value){
+	return Math.abs(value);
+}
 
-	onLoad();
+// Square root
+function sqrt(value){
+	return Math.sqrt(value);
+}
+
+function posCos(value){
+	return abs(Math.cos(value));
 }

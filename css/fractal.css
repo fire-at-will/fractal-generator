@@ -1,6 +1,7 @@
 body {
-    overflow:hidden;
+    /*overflow:hidden;*/
 }
+
 	
 #fractalCanvas{
 	z-index: 1;
@@ -8,7 +9,7 @@ body {
 	width: 100vw;
 	max-width:100%; 
 	max-height: 100%;
-	position: absolute;
+	position: relative;
 	top: 0;
 	left: 0;
 }
@@ -29,6 +30,13 @@ body {
 
 #palatte-dropdown{
 	color: black;
+}
+
+.popover{
+	width: 40em;
+	max-width: 40em; !important;
+	overflow-y:auto;
+  	z-index:1000;
 }
 
 .btn-row{
