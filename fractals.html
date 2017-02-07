@@ -71,7 +71,7 @@
                     <div class='col-md-4'></div>
                   </div>
                   "
-                  data-original-title='Color Palatte'>Color Palatte
+                  data-original-title='Color Palette'>Color Palette
                 </button>
                 <!-- End Color Palatte -->
               </div>
@@ -95,7 +95,6 @@
               </div>
             </div>
 
-
             <div class='row btn-row'>
               <div class='col-md-6'>
                 <button id='redraw-button' type='button' class='btn btn-secondary btn-sm' onClick='redraw();'>Redraw</button>
@@ -111,6 +110,9 @@
           </div>
 
           <a data-toggle='collapse' href='#settings-panel' aria-expanded='false' aria-controls='collapseExample' onclick="settingsToggleClicked()" id="showSettingsToggle">Show Settings</a>
+          <br>
+            <a onclick="scrollToAbout()" id="showAbout">How to Use</a>
+
         </div>
       </div>
       <canvas id='fractalCanvas' class='canvas'></canvas>
@@ -118,5 +120,184 @@
         
       </div>
     </div>
+
+  <div class="container" id="aboutSection">
+      <h3>Controls and Settings</h3>
+
+      <div class="well">
+          <table class="table">
+              <thead>
+              <tr>
+                  <th>Input</th>
+                  <th>Result</code></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                  <td>Click</td>
+                  <td>Zooms in on the area that you clicked.</td>
+              </tr>
+              <tr>
+                  <td>Shift + Click</td>
+                  <td>Zooms out from the area you clicked.</td>
+              </tr>
+              <tr>
+                  <td>Color Palette</td>
+                  <td>Select a coloring mode to use.</td>
+              </tr>
+              <tr>
+                  <td>Iteration Count</td>
+                  <td>See below for more information. In general, you want this number to be higher as you zoo
+                  in more. Play around with it and see what happens!</td>
+              </tr>
+              <tr>
+                  <td>Auto-Incerment Iteration Count</td>
+                  <td>Automatically increases the iteration count by 25 each time you zoom in.</td>
+              </tr>
+              <tr>
+                  <td>Redraw</td>
+                  <td>Redraws the current view of the fractal. Useful if your windows gets resized!</td>
+              </tr>
+              <tr>
+                  <td>Download as PNG</td>
+                  <td>Creates a PNG image from the current fractal. Share it with your friends or use it as
+                  a new wallpaper! :)</td>
+              </tr>
+
+              </tbody>
+          </table>
+      </div>
+
+      <p>In order to fully explain how some of these settings work, we first need to take a step back and understand
+          some of the theory behind the Mandelbrot fractal! Here we go...</p>
+
+      <h3>About the Mandelbrot Fractal</h3>
+
+      <p>According to <a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Wikipedia</a>, the Mandelbrot set is
+        defined as "the set of complex numbers c for which the function <code>&#402;<sub><var>c</var></sub>(<var>z</var>) = <var>z</var><sup>2</sup> + <var>c</var></code> does not
+          diverge when iterated from z = 0".
+      </p>
+
+      <p>What does this mean for us? Well, we can map the values of z and c to the standard Cartesian plane,
+      giving us graph that represents the Mandelbrot fractal. A set of coordinates is said to be contained
+      inside the Mandelbrot set if when you repeatedly apply the function
+          <code>&#402;<sub><var>c</var></sub>(<var>z</var>) = <var>z</var><sup>2</sup> + <var>c</var></code>
+      to the coordinates, the value of the function never grows larger than 2. For example, let's consider
+      the coordinates <code><var>z</var> = 0</code> and <code><var>c</var> = -1</code>:</p>
+
+      <div class="well">
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>Value of z</code></th>
+                      <th>Value of c</code></th>
+                      <th>&#402;<sub>c</sub>(z) = z<sup>2</sup> + c</th>
+                      <th>New Value of z</th>
+                  </tr>
+              </thead>
+              <tbody>
+              <tr>
+                  <td>0</td>
+                  <td>-1</td>
+                  <td>z = 0 - 1</td>
+                  <td>-1</td>
+              </tr>
+              <tr>
+                  <td>-1</td>
+                  <td>-1</td>
+                  <td>z = 1 - 1</td>
+                  <td>0</td>
+              </tr>
+              <tr>
+                  <td>0</td>
+                  <td>-1</td>
+                  <td>z = 0 - 1</td>
+                  <td>-1</td>
+              </tr>
+              <tr>
+                  <td>-1</td>
+                  <td>-1</td>
+                  <td>z = 1 - 1</td>
+                  <td>0</td>
+              </tr>
+
+              </tbody>
+          </table>
+      </div>
+      <p>As shown above, the value of <code><var>z</var></code> for the coordinates
+          <code><var>z</var> = 0</code> and <code><var>c</var> = -1</code> oscillates between
+          0 and -1, and thus never becomes greater than 2. Therefore, we say that the coordinates
+          <code><var>z</var> = 0</code> and <code><var>c</var> = -1</code> are contained within
+      the Mandelbrot set. Typically, these coordinates are colored black.</p>
+
+      <p>We've talked about what it takes to be inside the Mandelbrot set, but what about the coordinates
+          not contained in the set? These coordinate's z value eventually grow larger than 2. The number
+      of times we run a set of coordinates through the Mandelbrot equation is defined as the number of
+      <i>iterations</i> used. Let's consider the coordinates <code><var>z</var> = 0</code> and <code><var>c</var> = 1</code>:</p>
+
+      <div class="well">
+          <table class="table">
+              <thead>
+              <tr>
+                  <th>Value of z</code></th>
+                  <th>Value of c</code></th>
+                  <th>&#402;<sub>c</sub>(z) = z<sup>2</sup> + c</th>
+                  <th>New Value of z</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                  <td>0</td>
+                  <td>1</td>
+                  <td>z = 0 + 1</td>
+                  <td>1</td>
+              </tr>
+              <tr>
+                  <td>1</td>
+                  <td>1</td>
+                  <td>z = 1 + 1</td>
+                  <td>2</td>
+              </tr>
+              <tr>
+                  <td>2</td>
+                  <td>1</td>
+                  <td>z = 4 + 1</td>
+                  <td>5</td>
+              </tr>
+              <tr>
+                  <td>5</td>
+                  <td>1</td>
+                  <td>z = 25 + 1</td>
+                  <td>26</td>
+              </tr>
+              <tr>
+                  <td>26</td>
+                  <td>1</td>
+                  <td>z = 676 + 1</td>
+                  <td>677</td>
+              </tr>
+
+              </tbody>
+          </table>
+      </div>
+
+      <p>These coordinates' <code><var>z</var></code> value grows larger than 2 after 3 iterations. So, if we
+      were to consider all 5 of the iterations shown, the coordiates <code><var>z</var> = 0</code> and <code><var>c</var> = 1</code>
+      would not be a part of the Mandelbrot set. However, if we only consider the first 2 iterations, this pair
+      of coordinates' <code><var>z</var></code> value never grows larger than 2, and thus is contained
+      in the Mandelbrot set. It's all about perspective!</p>
+
+      <p>To achieve the impressive colors seen above, we assign a certain color to each set of coordinates
+      that take a similar number of iterations to leave the Mandelbrot set. So, for example, we could color
+      all coordinates in the set with black, the coordinates that take between 0 and 5 iterations green,
+          the coordinates that take between 5 and 10 iterations blue, and so on.</p>
+  </div>
+
+    <footer class="footer">
+        <div class="container" style="color: white;">
+            <h4>Website created by <a href="http://willtaylor.io/">Will Taylor</a>.</h4>
+        </div>
+    </footer>
+
   </body>
 </html>

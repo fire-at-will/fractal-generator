@@ -2,7 +2,6 @@ body {
     /*overflow:hidden;*/
 }
 
-	
 #fractalCanvas{
 	z-index: 1;
 	height: 100vh;
@@ -45,4 +44,12 @@ body {
 
 .btn{
 	color: black;
+}
+
+.footer{
+	height: 6em;
+	background-color: #3C3C3B;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }

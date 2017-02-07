@@ -13,6 +13,16 @@ function onMouseDown(e){
 	var mouseX = parseInt(e.clientX - offsetX);
 	var mouseY = parseInt(e.clientY - offsetY);
 
+
+	if($(document).scrollTop() != 0){
+        $('html, body').animate({
+            scrollTop: ($('#fractalCanvas').offset().top)
+        },750);
+
+        return;
+	}
+
+
 	if(autoIncrementIterations){
 		maxIterations += 25;
 		$('#iteration-input').val(maxIterations);
@@ -46,6 +56,7 @@ function onMouseDown(e){
 
 		minI = centerY - ((iRange / 2) * zoom);
 		maxI = centerY + ((iRange / 2) * zoom);
+
 	} else {
 		// Zoom in
 		// Zoom in on the point while maintaining aspect ratio
